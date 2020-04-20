@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
-import 'foodBody.dart';
-import 'funBody.dart';
+import 'package:random_date_night/dbfood.dart';
+import 'package:random_date_night/foodBody.dart';
+import 'package:random_date_night/funBody.dart';
 import 'homeScreen.dart';
 
+import 'dart:async';
 
-void main() => runApp(MyApp());
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+
+
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await DBFOOD.init();
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Random Date Night',
+      title: 'Create A Date',
       theme: ThemeData(
 
         primarySwatch: Colors.lightBlue,

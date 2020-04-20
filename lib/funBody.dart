@@ -5,9 +5,13 @@ class Fun {
 
   Fun(this.name);
 
-  Fun.fromJson(Map<String, dynamic> json) : name = json['name'];
+  Fun.fromJson(Map<String, dynamic> json)
+      : name = json['name'];
 
-  Map<String, dynamic> toJson() => {'name': name};
+  Map<String, dynamic> toJson() => {
+    'category': "fun",
+    'name': name,
+  };
 }
 
 // FUN SCREEN STATE BUILDER

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'foodBody.dart';
+import 'package:random_date_night/dbfood.dart';
+import 'package:random_date_night/foodBody.dart';
 import 'funBody.dart';
 import 'homeBody.dart';
 
@@ -20,6 +21,12 @@ class HomeScreenState extends State<HomeScreen> {
   */
   int _currentIndex = 1;
 
+  // create the string list to hold Food places
+  List<String> myFoods = List<String>();
+
+  // create the string list to hold Food places
+  List<String> myActivities = List<String>();
+
   // this array will hold the widgets that will make up the "body" of the app
   final pageOptions = [
     new FoodBody(),
@@ -32,7 +39,7 @@ class HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Random Dating App'),
+        title: Text('Create A Date'),
       ),
 
       body: pageOptions.elementAt(_currentIndex),

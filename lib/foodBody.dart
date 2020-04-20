@@ -1,114 +1,135 @@
 import 'package:flutter/material.dart';
-
-class Food {
-  final String name;
-
-  Food(this.name);
-
-  Food.fromJson(Map<String, dynamic> json) : name = json['name'];
-
-  Map<String, dynamic> toJson() => {'name': name};
-}
+import 'package:random_date_night/FoodItem.dart';
+import 'package:random_date_night/dbfood.dart';
+import "dart:math";
 
 class FoodBody extends StatefulWidget {
+
+  FoodBody({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => FoodBodyState();
 }
 
-
 // FOOD SCREEN
 class FoodBodyState extends State<FoodBody> {
 
-  /*
-  Create the text controller
-  The text controller  will be used to retrieve the string in the textField
-  */
-  final myController = TextEditingController();
+  TextStyle _style = TextStyle(color: Colors.black, fontSize: 24);
 
-  // myController dispose() method
-  @override
-  void dispose() {
-    myController.dispose();
-    super.dispose();
+
+  // create the list to hold Food places
+  List<FoodItem> myFoods = [];
+
+  // temporary string to hold food names
+  String tempFood;
+
+  List<Widget> get _listItems => myFoods.map((item) => format(item)).toList();
+
+
+  Widget format(FoodItem item) {
+
+    return Dismissible(
+      key: Key(item.id.toString()),
+      child: Padding(
+          // add some padding for the list tiles
+          padding: EdgeInsets.fromLTRB(12, 6, 12, 4),
+          child: FlatButton(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(item.name, style: _style),
+
+                ]
+            ),
+            onPressed: (){},
+
+          )
+      ),
+      onDismissed: (DismissDirection direction) => _delete(item),
+    );
   }
 
-  // create the string list to hold Food places
-  List<String> myFoods = List<String>();
 
-  Widget _buildRow(String item) {
-    return ListTile(
-      title: Text(item),
+  // CREATE FOOD ITEM IN DB
+  void _save() async {
+
+    Navigator.of(context).pop();
+
+    FoodItem foodSave = FoodItem(
+      name: tempFood,
     );
-  } // _buildRow
+    
+    await DBFOOD.insert(FoodItem.table, foodSave);
 
-  Widget _buildList( List<String> inputList) {
-    return ListView.builder (
-      itemCount: inputList.length,
-      itemBuilder: (context, i) {
-        return _buildRow(inputList[i]);
-      }, // itemBuilder
-    ); // ListView.builder
-  } // _buildList
+    setState(() => tempFood = '');
 
-  /*
-  This widget will create a type-able text field and a save button to save the
-  user entered string to the list
-   */
-  Widget textSaveFood() {
-    // wrap will try to fit all the contained widgets on one line
-    return Wrap(
-      children: [
-        Container(
-          width: 300,
-          child: TextField (
-            // give the TextField the controller in order to access the string
-            controller: myController,
-            // style the text in TextField
-            style: TextStyle(
-              fontSize: 20,
-            ),
-            decoration: InputDecoration (
-                border: InputBorder.none,
-                hintText: 'Add a restuarant to the list here!'
-            ),
-          ),
-        ),
-        ButtonTheme(
-          minWidth: 60,
-          child: RaisedButton (
-              onPressed: () {
-                setState(() {
-                  // get text from textField and add it to myFoods list
-                  myFoods.add(myController.text);
-                  myController.clear();
-                }); // setState
-              }, // onPressed
-              child: Text('Save',
-                style: TextStyle(fontSize: 20),
+    refresh();
+  } // END _save()
+
+  void _delete(FoodItem item) async {
+
+    DBFOOD.delete(FoodItem.table, item);
+    refresh();
+  } // END _delete()
+
+  void _createFoodItem(BuildContext context) {
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Create New Task"),
+            actions: <Widget>[
+              FlatButton(
+                  child: Text('Cancel'),
+                  onPressed: () => Navigator.of(context).pop()
+              ),
+              FlatButton(
+                  child: Text('Save'),
+                  onPressed: () => _save()
               )
-          ),
-        ),
-      ],
+            ],
+            content: TextField(
+              autofocus: true,
+              decoration: InputDecoration(
+                  labelText: 'Restaurant Name',
+                  hintText: "Domino's pizza"),
+              onChanged: (value) { tempFood = value; },
+            ),
+          );
+        }
     );
+  }
+
+  @override
+  void initState() {
+
+    refresh();
+    print("refreshed");
+    super.initState();
+  }
+
+  void refresh() async {
+
+    List<Map<String, dynamic>> _results = await DBFOOD.query(FoodItem.table);
+    myFoods = _results.map((item) => FoodItem.fromMap(item)).toList();
+    setState( () {} );
   }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
+        body: Center(
+            child: ListView( children: _listItems )
 
-      body: Center (
-        child: Column(
-          children: <Widget> [
-            Expanded (
-              child: _buildList(myFoods),
-            ),
-            textSaveFood(),
-          ],
         ),
-      ),
-
+        floatingActionButton: FloatingActionButton(
+          onPressed: () { _createFoodItem(context); },
+          tooltip: 'Add a new food choice here!',
+          child: Icon(Icons.library_add),
+        )
     );
-  } // Build
+
+  }
 } // FOOD SCREEN OVER
