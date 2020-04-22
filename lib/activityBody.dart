@@ -2,19 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:random_date_night/activityItem.dart';
 import 'package:random_date_night/dbactivity.dart';
 
-class FunBody extends StatefulWidget {
+Future<String> getRandomActivity() async {
+  ActivityItem randomActivity;
+  randomActivity = await DBACTIVITY.getRandomActivity();
+  if(randomActivity != null) {
+    return randomActivity.name;
+  }
+  return null;
 
-  FunBody({Key key}) : super(key: key);
+}
+
+class ActivityBody extends StatefulWidget {
+
+  ActivityBody({Key key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => FunBodyState();
+  State<StatefulWidget> createState() => ActivityBodyState();
 }
 
 // FOOD SCREEN
-class FunBodyState extends State<FunBody> {
+class ActivityBodyState extends State<ActivityBody> {
 
-  TextStyle _style = TextStyle(color: Colors.black, fontSize: 24);
+  Color colorBackground = const Color.fromRGBO(57, 47, 90, 1.0);
+  Color colorText = const Color.fromRGBO(240, 146, 221, 1.0);
 
+  Color colorButton = const Color.fromRGBO(238, 200, 224, 1.0);
+  Color colorButtonSplash = const Color.fromRGBO(255, 175, 240, 1.0);
 
   // create the list to hold Food places
   List<ActivityItem> myActivities = [];
@@ -37,7 +50,12 @@ class FunBodyState extends State<FunBody> {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(item.name, style: _style),
+                  Text(item.name, style: TextStyle(
+                    color: colorText,
+                    fontSize: 24.0,
+                    fontFamily: 'ComicNeue',
+                  )
+                  ),
 
                 ]
             ),
@@ -129,9 +147,30 @@ class FunBodyState extends State<FunBody> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-        body: Center(
-            child: ListView( children: _listItems )
+        backgroundColor: colorBackground,
 
+
+        body: ListView( children: <Widget> [
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 30),
+            child: Center(
+              // TITLE OF THE PAGE
+              child: Text('Activity List',
+                  style: TextStyle(
+                    fontSize: 45.0,
+                    fontFamily: 'KaushanScript',
+                    color: colorText,
+                  )
+              ),
+            ),
+          ),
+          Center(
+            // create list view widget and populate with _listItems
+              child: ListView(
+                shrinkWrap: true,
+                children: _listItems,)
+          ),
+        ]
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () { _createFoodItem(context); },

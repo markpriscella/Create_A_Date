@@ -1,8 +1,8 @@
-
 import 'dart:async';
+import 'package:sqflite/sqflite.dart';
 import 'package:random_date_night/food.dart';
 import 'package:random_date_night/FoodItem.dart';
-import 'package:sqflite/sqflite.dart';
+
 
 abstract class DBFOOD {
 
@@ -15,7 +15,7 @@ abstract class DBFOOD {
     if (_dbfood != null) { return _dbfood; }
 
     try {
-      String _path = await getDatabasesPath() + 'example';
+      String _path = await getDatabasesPath() + 'food';
       _dbfood = await openDatabase(_path, version: _version, onCreate: onCreate);
     }
     catch(ex) {
@@ -37,6 +37,17 @@ abstract class DBFOOD {
   static Future<int> delete(String table, Food item) async =>
       await _dbfood.delete(table, where: 'id = ?', whereArgs: [item.id]);
 
+  static Future<FoodItem> getRandFood() async {
 
+    List<Map> randFoodMap =
+    await _dbfood.rawQuery('SELECT * FROM food_items ORDER BY RANDOM() LIMIT 1');
+
+    if (randFoodMap.length > 0)
+    {
+      return FoodItem.fromMap(randFoodMap.first);
+    }
+    return null;
+
+  }
 }
 

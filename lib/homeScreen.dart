@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:random_date_night/dbfood.dart';
 import 'package:random_date_night/foodBody.dart';
-import 'funBody.dart';
+import 'activityBody.dart';
 import 'homeBody.dart';
 
 // HOME
@@ -14,6 +13,10 @@ class HomeScreen extends StatefulWidget {
 
 // HOME SCREEN
 class HomeScreenState extends State<HomeScreen> {
+
+  Color colorBottomNavBar =  const Color.fromRGBO(255, 175, 240, 1.0);
+  Color colorBackground = const Color.fromRGBO(57, 47, 90, 1.0);
+
 
   /*
   we want the app to start on the "create a date" page which is index 1
@@ -31,16 +34,21 @@ class HomeScreenState extends State<HomeScreen> {
   final pageOptions = [
     new FoodBody(),
     new HomeBody(),
-    new FunBody(),
+    new ActivityBody(),
   ]; //
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Create A Date'),
-      ),
+      /*appBar: AppBar(
+        title: Center(
+          child: Text('Create a Date',
+          style: TextStyle(
+            color: colorBackground,
+          ),),
+        ),
+      ),*/
 
       body: pageOptions.elementAt(_currentIndex),
       // tabs[_currentIndex],
@@ -57,13 +65,14 @@ class HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: new Icon(Icons.sentiment_very_satisfied),
-            title: new Text('Fun List'),
+            title: new Text('Activity List'),
           ),
         ],
         // this will be set when a new tab is pressed
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.lightBlueAccent, //change color if wanted
+        backgroundColor: colorBottomNavBar,
+
 
         // this will be called when a navigation tab is pressed
         onTap: onItemTapped,
