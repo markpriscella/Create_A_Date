@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
 
       title: 'Create A Date',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
 
         primarySwatch: Colors.pink,
