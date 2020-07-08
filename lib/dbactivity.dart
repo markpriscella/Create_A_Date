@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:random_date_night/activity.dart';
 import 'package:random_date_night/activityItem.dart';
+import 'package:path/path.dart' as p;
+
 
 // database class
 abstract class DBACTIVITY {
@@ -10,18 +12,17 @@ abstract class DBACTIVITY {
 
   static int get _version => 1;
 
-  static Future<void> init() async {
+  static Future<Database> init() async {
+    //Get path of the directory for android and iOS.
 
-    if (_dbactivity != null) { return _dbactivity; }
+    var databasesPath = await getDatabasesPath();
+    String path = p.join(databasesPath, 'activity.db');
 
-    try {
-      String _path = await getDatabasesPath() + 'activity';
-      _dbactivity = await openDatabase
-        (_path, version: _version, onCreate: onCreate);
-    }
-    catch(ex) {
-      print(ex);
-    }
+    //open/create database at a given path
+    _dbactivity = await openDatabase(path, version: 1, onCreate: onCreate);
+
+    return _dbactivity;
+
   }
 
   static void onCreate(Database db, int version) async =>
