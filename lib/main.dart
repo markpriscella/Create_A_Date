@@ -35,3 +35,11 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+/*************************************************************/
+/*          TO-DO NEXT                                       */
+/*  1. Add an animation when a new date is created           */
+/*  2. Make the newly created date stand out more            */
+/*        maybe with a box around the date                   */
+/*  3. make the titles of the pages NOT in the list          */
+/*************************************************************/
